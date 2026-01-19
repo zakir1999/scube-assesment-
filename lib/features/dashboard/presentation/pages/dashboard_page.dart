@@ -10,11 +10,12 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(Icons.arrow_back),
+        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.push('/login')),
         title: const Text("1st Page"),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications_active, color: AppColors.errorRed))
+          IconButton(onPressed: () {
+            }, icon: const Icon(Icons.notifications_active_rounded, color: AppColors.errorRed))
         ],
       ),
       body: SingleChildScrollView(
@@ -24,7 +25,7 @@ class DashboardPage extends StatelessWidget {
             _buildNavigationBanner(context),
             const SizedBox(height: 16),
             _buildTopStatsGrid(),
-            const SizedBox(height: 16),
+            const SizedBox(height: 5),
             _buildWeatherCard(),
             const SizedBox(height: 16),
             _buildDataComparisonTable(),
@@ -67,16 +68,19 @@ class DashboardPage extends StatelessWidget {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 10,
-      childAspectRatio: 2.2,
+      crossAxisCount: 3,
+      crossAxisSpacing: 5,
+      mainAxisSpacing: 5,
+      childAspectRatio:2,
       children: const [
-        InfoCard(title: "Live AC Power", value: "10000 kW", icon: Icons.bolt, iconColor: Colors.green),
-        InfoCard(title: "Plant Generation", value: "82.58 %", icon: Icons.solar_power, iconColor: Colors.teal),
+        InfoCard(title: "Live AC Power", value: "10000 kW", icon: Icons.offline_bolt_outlined, iconColor: Colors.green),
+        InfoCard(title: "Plant Generation", value: "82.58 %", icon: Icons.generating_tokens_sharp, iconColor: Colors.teal),
         InfoCard(title: "Cumulative PR", value: "27.58 %", icon: Icons.percent, iconColor: Colors.blue),
-        InfoCard(title: "Return PV(Till Today)", value: "10000 ৳", icon: Icons.monetization_on, iconColor: Colors.orange, subtitle: "Total Energy: 10000 kWh"),
-      ],
+        InfoCard(title: "Return PV(Till Today)", value: "10000 ৳", icon: Icons.monetization_on, iconColor: Colors.orange,),
+        InfoCard(title: "Live PR", value: "85.61 %", icon: Icons.offline_bolt_outlined, iconColor: Colors.green),
+        InfoCard(title: "Total Energy", value: "1000 kW", icon: Icons.energy_savings_leaf_rounded, iconColor: Colors.pink),
+      ]
+
     );
   }
 

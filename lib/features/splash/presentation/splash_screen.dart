@@ -15,7 +15,9 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) context.go('');
+      if (mounted) {
+        context.go('/login');
+      }
     });
   }
   @override
@@ -40,7 +42,7 @@ class _SplashPageState extends State<SplashPage> {
             ),
             const SizedBox(height: 10),
             const Text(
-              "SCUBA",
+              "SCUBE",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 32,
