@@ -17,124 +17,133 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryBlue,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              flex: 4,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.asset(
+      body: Stack(
+        children: [
+          // 🔵 FULL BLUE BACKGROUND
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: AppColors.primaryBlue,
+          ),
+
+          Column(
+            children: [
+              // 🔵 TOP SAFE AREA ONLY
+              SafeArea(
+                bottom: false, // 🔥 VERY IMPORTANT
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
                         AppAssets.logo,
                         width: 80,
                         height: 80,
-                        fit: BoxFit.contain,
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text("SCUBE", style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 5),
-                    const Text("Control & Monitoring System", style: TextStyle(color: Colors.white70, fontSize: 16)),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 6,
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
+                      const SizedBox(height: 12),
+                      const Text(
+                        "SCUBE",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                        "Control & Monitoring System",
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                padding: const EdgeInsets.all(24),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SingleChildScrollView(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
+              ),
+
+              // ⚪ WHITE CARD → EXTENDS TO BOTTOM
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Login",
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textDark,
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                const SizedBox(height: 20),
-                                const Text(
-                                  "Login",
-                                  style: TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textDark,
-                                  ),
-                                ),
-                                const SizedBox(height: 30),
-                                _buildTextField("Username"),
-                                const SizedBox(height: 15),
-                                _buildTextField("Password", isPassword: true),
-                                const SizedBox(height: 10),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton(
-                                    onPressed: () {},
-                                    child: const Text(
-                                      "Forget password?",
-                                      style: TextStyle(
-                                        color: AppColors.textGrey,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                AppButton(
-                                  text: "Login",
-                                  onPressed: () => context.go('/dashboard'),
-                                ),
-                              ],
+                        const SizedBox(height: 30),
+
+                        _buildTextField("Username"),
+                        const SizedBox(height: 15),
+                        _buildTextField("Password", isPassword: true),
+
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {},
+                            child: const Text(
+                              "Forget password?",
+                              style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: AppColors.textGrey,
+                              ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text("Don't have any account? "),
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: const Text(
-                                    "Register Now",
-                                    style: TextStyle(
-                                      color: AppColors.primaryBlue,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                )
-                              ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+                        AppButton(
+                          text: "Login",
+                          onPressed: () => context.go('/dashboard'),
+                        ),
+
+                        const SizedBox(height: 25),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Don't have any account? "),
+                            GestureDetector(
+                              onTap: () {},
+                              child: const Text(
+                                "Register Now",
+                                style: TextStyle(
+                                  color: AppColors.primaryBlue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    );
-                  },
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
+
+
 
   Widget _buildTextField(String hint, {bool isPassword = false}) {
     return TextField(
