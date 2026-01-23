@@ -27,7 +27,7 @@ class ScubeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'SCUBE Control System',
+      title: 'SCUBE Control System developed by Md.Jakir Hossen',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       routerConfig: appRouter,

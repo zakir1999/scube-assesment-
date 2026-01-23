@@ -1,7 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/appbar.dart';
+import '../../../../core/widgets/navigate_banner_button.dart';
 
 class DetailsPage extends StatefulWidget {
   const DetailsPage({super.key});
@@ -10,53 +13,146 @@ class DetailsPage extends StatefulWidget {
   State<DetailsPage> createState() => _DetailsPageState();
 }
 
-class _DetailsPageState extends State<DetailsPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
+class _DetailsPageState extends State<DetailsPage> {
+  int _selectedTabIndex = 0;
+  bool _isSourceSelected = true;
+  final ScrollController _listScrollController = ScrollController();
+  final List<Map<String, dynamic>> _dataItems = [
+    {
+      'title': 'Data View',
+      'active': true,
+      'squareColor': AppColors.squareSolar,
+      'icon': Icons.solar_power_outlined,
+      'iconBg': const Color(0xFFE1F5FE),
+      'iconColor': Colors.blueGrey,
+      'isBattery': false,
+    },
+    {
+      'title': 'Data Type 2',
+      'active': true,
+      'squareColor': AppColors.squareBattery,
+      'icon': Icons.battery_charging_full,
+      'iconBg': const Color(0xFF37474F),
+      'iconColor': Colors.yellowAccent,
+      'isBattery': true,
+    },
+    {
+      'title': 'Data Type 3',
+      'active': false,
+      'squareColor': AppColors.squareGrid,
+      'icon': Icons.electric_meter,
+      'iconBg': const Color(0xFFE8F5E9),
+      'iconColor': Colors.teal,
+      'isBattery': false,
+    },
+    {
+      'title': 'Data Type 4',
+      'active': true,
+      'squareColor': Colors.purpleAccent,
+      'icon': Icons.electrical_services,
+      'iconBg': const Color(0xFFF3E5F5),
+      'iconColor': Colors.purple,
+      'isBattery': false,
+    },
+    {
+      'title': 'Data Type 5',
+      'active': false,
+      'squareColor': Colors.redAccent,
+      'icon': Icons.wind_power,
+      'iconBg': const Color(0xFFFFEBEE),
+      'iconColor': Colors.red,
+      'isBattery': false,
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop()),
-        title: const Text("2nd Page"),
-        centerTitle: true,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications_active, color: AppColors.errorRed))
-        ],
-      ),
+      backgroundColor: AppColors.scaffoldBg,
+      appBar: const CustomAppBar(title: "2nd Page"),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 2, 16, 3),
         child: Column(
           children: [
-            _buildNavigationBanner(context),
-            const SizedBox(height: 16),
-            _buildTabBar(),
-            const SizedBox(height: 20),
+            CustomNavigationBanner(
+              text: "1st Page Navigate",
+              isArrowLeft: false,
+              onTap: () => context.pop(),
+            ),
+            const SizedBox(height: 10),
+
             Container(
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
-              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.withValues(alpha: 0.05),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
               child: Column(
                 children: [
-                  const Text("Electricity", style: TextStyle(fontSize: 16, color: Colors.grey)),
-                  const Divider(),
-                  const SizedBox(height: 20),
-                  _buildCircularChart(),
-                  const SizedBox(height: 30),
-                  _buildToggleSwitch(),
-                  const SizedBox(height: 20),
-                  _buildDataItem("Data View", "55505.63", "58805.63", isActive: true, color: Colors.blue),
-                  _buildDataItem("Data Type 2", "55505.63", "58805.63", isActive: true, color: Colors.orange),
-                  _buildDataItem("Data Type 3", "55505.63", "58805.63", isActive: false, color: Colors.lightBlueAccent),
+                  _buildCustomTabBar(),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Electricity",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Divider(height: 1, color: Color(0xFFEEEEEE)),
+                        const SizedBox(height: 10),
+                        _buildCircularChart(),
+                        const SizedBox(height: 10),
+
+                        _buildToggleSwitch(),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: 250,
+                          child: RawScrollbar(
+                            controller: _listScrollController,
+                            thumbColor: AppColors.primaryBlue.withValues(
+                              alpha: 0.5,
+                            ),
+                            radius: const Radius.circular(4),
+                            thickness: 4,
+                            thumbVisibility: true,
+                            child: ListView.builder(
+                              controller: _listScrollController,
+                              padding: const EdgeInsets.only(right: 8),
+                              itemCount: _dataItems.length,
+                              itemBuilder: (context, index) {
+                                final item = _dataItems[index];
+                                return _buildListItem(
+                                  title: item['title'],
+                                  isActive: item['active'],
+                                  squareColor: item['squareColor'],
+                                  icon: item['icon'],
+                                  iconBg: item['iconBg'],
+                                  iconColor: item['iconColor'],
+                                  isBattery: item['isBattery'],
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+
+            const SizedBox(height: 10),
             _buildBottomGridMenu(),
           ],
         ),
@@ -64,38 +160,62 @@ class _DetailsPageState extends State<DetailsPage> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildNavigationBanner(BuildContext context) {
-    return InkWell(
-      onTap: () => context.pop(),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(color: const Color(0xFF4FC3F7), borderRadius: BorderRadius.circular(8)),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.arrow_back_ios, color: Colors.white, size: 16),
-            SizedBox(width: 8),
-            Text("1st Page Navigate", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          ],
+  Widget _buildCustomTabBar() {
+    return Container(
+      height: 50,
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Color(0xFFEEEEEE), width: 1.5),
         ),
+      ),
+      child: Row(
+        children: [
+          _buildTabBtn("Summary", 0, isLeft: true),
+          Container(
+            width: 1,
+            height: 30,
+            color: Colors.grey.withValues(alpha: 0.2),
+          ),
+          _buildTabBtn("SLD", 1),
+          Container(
+            width: 1,
+            height: 30,
+            color: Colors.grey.withValues(alpha: 0.2),
+          ),
+          _buildTabBtn("Data", 2, isRight: true),
+        ],
       ),
     );
   }
 
-  Widget _buildTabBar() {
-    return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-      child: TabBar(
-        controller: _tabController,
-        labelColor: Colors.white,
-        unselectedLabelColor: Colors.grey,
-        indicator: BoxDecoration(color: AppColors.primaryBlue, borderRadius: BorderRadius.circular(6)),
-        indicatorPadding: const EdgeInsets.all(4),
-        tabs: const [
-          Tab(text: "Summary"),
-          Tab(text: "SLD"),
-          Tab(text: "Data"),
-        ],
+  Widget _buildTabBtn(
+    String label,
+    int index, {
+    bool isLeft = false,
+    bool isRight = false,
+  }) {
+    final bool isSelected = _selectedTabIndex == index;
+    return Expanded(
+      child: InkWell(
+        onTap: () => setState(() => _selectedTabIndex = index),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.primaryBlue : Colors.transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: isLeft ? const Radius.circular(16) : Radius.zero,
+              topRight: isRight ? const Radius.circular(16) : Radius.zero,
+            ),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.grey,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -109,21 +229,46 @@ class _DetailsPageState extends State<DetailsPage> with SingleTickerProviderStat
           PieChart(
             PieChartData(
               sections: [
-                PieChartSectionData(color: Colors.blueAccent, value: 75, radius: 25, showTitle: false),
-                PieChartSectionData(color: Colors.blue.withOpacity(0.1), value: 25, radius: 25, showTitle: false),
+                PieChartSectionData(
+                  color: AppColors.primaryBlue,
+                  value: 70,
+                  radius: 28,
+                  showTitle: false,
+                ),
+                PieChartSectionData(
+                  color: const Color(0xFFE3F2FD),
+                  value: 30,
+                  radius: 28,
+                  showTitle: false,
+                ),
               ],
               startDegreeOffset: 270,
               sectionsSpace: 0,
-              centerSpaceRadius: 70,
+              centerSpaceRadius: 65,
             ),
           ),
-          const Column(
+          Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("Total Power", style: TextStyle(color: Colors.grey, fontSize: 12)),
-              Text("5.53 kw", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+            children: const [
+              Text(
+                "Total Power",
+                style: TextStyle(
+                  color: AppColors.textDark,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                "5.53 kw",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -131,92 +276,308 @@ class _DetailsPageState extends State<DetailsPage> with SingleTickerProviderStat
 
   Widget _buildToggleSwitch() {
     return Container(
-      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
+      width: 300,
+      height: 46,
+      decoration: BoxDecoration(
+        color: const Color(0xFFECEFF1),
+        borderRadius: BorderRadius.circular(24),
+      ),
       child: Row(
         children: [
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(color: AppColors.primaryBlue, borderRadius: BorderRadius.circular(20)),
-              child: const Center(child: Text("Source", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+            child: GestureDetector(
+              onTap: () => setState(() => _isSourceSelected = true),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: _isSourceSelected
+                      ? AppColors.primaryBlue
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "Source",
+                  style: TextStyle(
+                    color: _isSourceSelected ? Colors.white : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
             ),
           ),
           Expanded(
-            child: Center(child: Text("Load", style: TextStyle(color: Colors.grey.shade600))),
+            child: GestureDetector(
+              onTap: () => setState(() => _isSourceSelected = false),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: !_isSourceSelected
+                      ? AppColors.primaryBlue
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "Load",
+                  style: TextStyle(
+                    color: !_isSourceSelected ? Colors.white : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDataItem(String title, String d1, String d2, {required bool isActive, required Color color}) {
+  Widget _buildListItem({
+    required String title,
+    required bool isActive,
+    required Color squareColor,
+    required IconData icon,
+    required Color iconBg,
+    required Color iconColor,
+    bool isBattery = false,
+  }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isActive ? Colors.white : Colors.grey.shade100,
-        border: Border.all(color: Colors.grey.shade200),
+        color: AppColors.listTileBg,
+        // Uniform light blue bg as per image list style
+        border: Border.all(color: AppColors.listBorder),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
-          Container(width: 40, height: 40, color: color.withOpacity(0.2), child: Icon(Icons.electric_bolt, color: color)),
-          const SizedBox(width: 12),
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: isBattery ? iconBg : Colors.transparent,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: isBattery
+                ? Icon(icon, color: iconColor, size: 28)
+                : Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Transform.rotate(
+                        angle: -0.2,
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          color: Colors.transparent,
+                          child: Icon(
+                            Icons.grid_3x3,
+                            color: Colors.blueGrey.withValues(alpha: 0.2),
+                            size: 36,
+                          ),
+                        ),
+                      ),
+                      Icon(icon, color: iconColor, size: 32),
+                    ],
+                  ),
+          ),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Container(width: 8, height: 8, color: color),
-                    const SizedBox(width: 5),
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
-                    Text(isActive ? "(Active)" : "(Inactive)", style: TextStyle(fontSize: 10, color: isActive ? Colors.blue : Colors.red)),
+                    Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: squareColor,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: AppColors.textDark,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      isActive ? "(Active)" : "(Inactive)",
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: isActive
+                            ? AppColors.activeText
+                            : AppColors.inactiveText,
+                      ),
+                    ),
                   ],
                 ),
-                Text("Data 1 : $d1", style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                Text("Data 2 : $d2", style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                const SizedBox(height: 6),
+                Table(
+                  columnWidths: const {
+                    0: FixedColumnWidth(55),
+                    1: FixedColumnWidth(10),
+                  },
+                  children: const [
+                    TableRow(
+                      children: [
+                        Text(
+                          "Data 1",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textGrey,
+                            height: 1.4,
+                          ),
+                        ),
+                        Text(
+                          ":",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textGrey,
+                            height: 1.4,
+                          ),
+                        ),
+                        Text(
+                          "55505.63",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textDark,
+                            fontWeight: FontWeight.w500,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        Text(
+                          "Data 2",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textGrey,
+                            height: 1.4,
+                          ),
+                        ),
+                        Text(
+                          ":",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textGrey,
+                            height: 1.4,
+                          ),
+                        ),
+                        Text(
+                          "58805.63",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textDark,
+                            fontWeight: FontWeight.w500,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, color: Colors.grey),
+          const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 16),
         ],
       ),
     );
   }
 
   Widget _buildBottomGridMenu() {
-    return GridView.count(
+    final menuItems = [
+      {
+        'title': 'Analysis Pro',
+        'icon': Icons.pie_chart,
+        'color': Colors.orangeAccent,
+      },
+      {
+        'title': 'G. Generator',
+        'icon': Icons.electrical_services,
+        'color': Colors.brown,
+      },
+      {
+        'title': 'Plant Summary',
+        'icon': Icons.flash_on,
+        'color': Colors.orange,
+      },
+      {
+        'title': 'Natural Gas',
+        'icon': Icons.local_fire_department,
+        'color': Colors.deepOrange,
+      },
+      {
+        'title': 'D. Generator',
+        'icon': Icons.power,
+        'color': Colors.amber.shade800,
+      },
+      {
+        'title': 'Water Process',
+        'icon': Icons.water_drop,
+        'color': Colors.lightBlue,
+      },
+    ];
+
+    return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      childAspectRatio: 3.5,
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 10,
-      children: [
-        _buildMenuButton("Analysis Pro", Icons.analytics),
-        _buildMenuButton("G. Generator", Icons.generating_tokens_outlined),
-        _buildMenuButton("Plant Summary", Icons.summarize),
-        _buildMenuButton("Natural Gas", Icons.local_fire_department),
-        _buildMenuButton("D. Generator", Icons.power_settings_new),
-        _buildMenuButton("Water Process", Icons.water_drop),
-      ],
-    );
-  }
-
-  Widget _buildMenuButton(String title, IconData icon) {
-    return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.orange, size: 20),
-          const SizedBox(width: 8),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-        ],
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 3.5,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
       ),
+      itemCount: menuItems.length,
+      itemBuilder: (context, index) {
+        final item = menuItems[index];
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.05),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            children: [
+              Icon(
+                item['icon'] as IconData,
+                color: item['color'] as Color,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  item['title'] as String,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: Color(0xFF546E7A),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
-

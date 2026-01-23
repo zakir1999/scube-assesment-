@@ -4,16 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
-
-
-
+import '../../../../core/widgets/appbar.dart';
+import '../../../../core/widgets/navigate_banner_button.dart';
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
 }
-
 class _DashboardPageState extends State<DashboardPage> {
   late Timer _timer;
   int _currentIndex = 0;
@@ -34,8 +32,8 @@ class _DashboardPageState extends State<DashboardPage> {
     },
     {
       'temp': 19.0,
-      'color': Color(0xFF455A64), // Darker Blue/Teal for night
-      'icon': Icons.nightlight_round, // Moon
+      'color': Color(0xFF455A64),
+      'icon': Icons.nightlight_round,
       'iconColor': Colors.white70,
       'isNight': true,
     },
@@ -63,12 +61,18 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: _buildAppBar(context),
+      appBar: const CustomAppBar(
+        title: "1st Page",
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
         child: Column(
           children: [
-            _buildNavigationBanner(context),
+            CustomNavigationBanner(
+              text: "2nd Page Navigate",
+              isArrowLeft: false,
+              onTap: () => context.push('/details'),
+            )     ,
             const SizedBox(height: 10),
             _buildTopStatsGrid(),
             const SizedBox(height: 5),
@@ -80,87 +84,22 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             const SizedBox(height: 5),
             _buildDataComparisonTable(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 5),
             _buildInfoBanner(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 5),
             _buildTechSpecsGrid(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 5),
             _buildUnitDetailCard("LT_01"),
-            const SizedBox(height: 16),
+            const SizedBox(height: 5),
             _buildUnitDetailCard("LT_02"),
-            const SizedBox(height: 30),
+
           ],
         ),
       ),
     );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: AppColors.primaryText),
-        onPressed: () => context.canPop() ? context.pop() : null, // Safety check
-      ),
-      title: const Text(
-        "1st Page",
-        style: TextStyle(color: AppColors.primaryText, fontWeight: FontWeight.bold),
-      ),
-      centerTitle: true,
-      actions: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications_none_rounded, color: AppColors.primaryText, size: 28),
-            ),
-            Positioned(
-              right: 12,
-              top: 12,
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            )
-          ],
-        )
-      ],
-    );
-  }
 
-  Widget _buildNavigationBanner(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        // context.push('/details');
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-            color: const Color(0xFF5AB9EA), // Exact blue from image
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(color: Colors.blue.withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 4))
-            ]
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("2nd Page Navigate",
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16)),
-            SizedBox(width: 8),
-            Icon(Icons.arrow_forward_ios, color: Colors.white, size: 14)
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildTopStatsGrid() {
     final stats = [
@@ -224,7 +163,7 @@ class _DashboardPageState extends State<DashboardPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5)],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 5)],
       ),
       child: Column(
         children: [
@@ -253,7 +192,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildTableRow(String label, String v1, String v2, {required bool isEven}) {
     return Container(
-      color: isEven ? Colors.grey.withOpacity(0.05) : Colors.white,
+      color: isEven ? Colors.grey.withValues(alpha: 0.2) : Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       child: Row(
         children: [
@@ -273,7 +212,7 @@ class _DashboardPageState extends State<DashboardPage> {
         children: [
           Container(
             padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(color: Colors.blue.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
+            decoration: BoxDecoration(color: Colors.blue.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
             child: const Icon(Icons.grid_view, color: Colors.blue, size: 18),
           ),
           const SizedBox(width: 10),
@@ -294,7 +233,7 @@ class _DashboardPageState extends State<DashboardPage> {
       {'title': 'Total DC Capacity', 'val': '3.727 MWp', 'icon': Icons.storage},
       {'title': 'Date of Commissioning', 'val': '17/07/2024', 'icon': Icons.calendar_today},
       {'title': 'Number of Inverter', 'val': '30', 'icon': Icons.dns},
-      {'title': 'Total AC Capacity', 'val': '3000 KW', 'icon': Icons.memory}, // Repeated in image
+      {'title': 'Total AC Capacity', 'val': '3000 KW', 'icon': Icons.memory},
       {'title': 'Total DC Capacity', 'val': '3.727 MWp', 'icon': Icons.storage},
     ];
 
@@ -311,7 +250,7 @@ class _DashboardPageState extends State<DashboardPage> {
       itemBuilder: (context, index) {
         final item = specs[index];
         return Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
           child: Row(
             children: [
@@ -343,8 +282,8 @@ class _DashboardPageState extends State<DashboardPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.blue.withOpacity(0.2)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5)],
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 5)],
       ),
       child: Column(
         children: [

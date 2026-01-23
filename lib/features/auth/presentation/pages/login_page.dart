@@ -19,7 +19,6 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // 🔵 FULL BLUE BACKGROUND
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -28,9 +27,8 @@ class _LoginPageState extends State<LoginPage> {
 
           Column(
             children: [
-              // 🔵 TOP SAFE AREA ONLY
               SafeArea(
-                bottom: false, // 🔥 VERY IMPORTANT
+                bottom: false,
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height * 0.35,
                   child: Column(

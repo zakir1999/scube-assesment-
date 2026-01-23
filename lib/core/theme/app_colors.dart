@@ -16,10 +16,8 @@ class AppColors {
   static const Color secondaryText = Color(0xFF6B7280);
   static const Color accentBlue = Color(0xFF4FC3F7);
   static const Color cardWhite = Colors.white;
-
   static const Color weatherPurpleStart = Color(0xFF6B65D8);
   static const Color weatherPurpleEnd = Color(0xFF9D84D8);
-
   static const Color infoBlue = Color(0xFF2196F3);
   static const Color thermoLow = Color(0xFF2196F3);
   static const Color thermoMid = Color(0xFF4CAF50);
@@ -27,4 +25,14 @@ class AppColors {
   static const Color thermoBlue = Color(0xFF2196F3);
   static const Color thermoRed = Color(0xFFE53935);
   static const Color thermoTeal = Color(0xFF009688);
+  static const Color scaffoldBg = Color(0xFFEAF0F6);
+  static const Color primaryGradientStart = Color(0xFF5AC4EF);
+  static const Color primaryGradientEnd = Color(0xFF5AB9EA);
+  static const Color listTileBg = Color(0xFFEBF5FB);
+  static const Color listBorder = Color(0xFFBDD4E7);
+  static const Color activeText = Color(0xFF3B97ED);
+  static const Color inactiveText = Color(0xFFE57373);
+  static const Color squareSolar = Color(0xFF90CAF9);
+  static const Color squareBattery = Color(0xFFFFA726);
+  static const Color squareGrid = Color(0xFF90CAF9);
 }
